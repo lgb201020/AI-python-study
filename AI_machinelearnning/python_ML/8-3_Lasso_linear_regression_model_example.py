@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import Lasso
 #데이터를 분리하기 위한 train_test_split를 import함
 from sklearn.model_selection import train_test_split
-#회귀 모델 성능 평가지수 RMSE를 사용하기 위해 mean_squared_error를 import함
+#회귀 모델 성능 평가지수 RMSE를 사용하기 위해 mean_squared_error를 import함.
 from sklearn.metrics import mean_squared_error
 
 
