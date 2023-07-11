@@ -20,6 +20,9 @@ import pandas as pd
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
+from sklearn.tree import export_graphviz
+import pydot
+
 
 #온라인 광고 클릭을 위한 훈련 데이터 준비
 train_df = pd.read_csv('C:\\Users\\기백이 노트북\\Desktop\\pythonstudy\\AI_machinelearnning\\python_ML\\train.gz', compression='gzip', header=0, sep=",", quotechar='"', nrows=100000)
@@ -43,14 +46,22 @@ X_test = vectorizer.transform(X_dict_test)
 
 #의사 결정 트리(CART 알고리즘을 이용) 학습 모델을 선언하고 gridsearchCV로 최적의 모델 탐색
 #gridsearchCV에 사용할 hyperparams를 미리 선언
-parameters = {'max_depth': [3, 10,None]}
+parameters = {'max_depth': [3, 10, None]}
 #기본 decision tree model을 생성
 decision_tree = DecisionTreeClassifier(criterion="gini",min_samples_split=30)
 #gridsearch객체 선언 후 학습 ml 모델 입력, 하이퍼 파라미터 입력, scoring 방식 입력(roc_auc는 분류평가지표 중 하나로 ROC곡선 아래의 면적을 의미)
-grid_search = GridSearchCV(decision_tree, parameters=parameters, n_jobs=-1, cv=3, scoring="roc_auc")
+grid_search = GridSearchCV(decision_tree, parameters, n_jobs=-1, cv=3, scoring="roc_auc")
 #선언한 gridsearch객체에 학습 데이터 적합
 grid_search.fit(X_train, y_train)
 #최적의 hyperparams를 출력
 grid_search.best_params_
 #grid_search 객체로 찾은 최적의 모델 인스턴스 선언
 decision_tree_best = grid_search.best_estimator_
+
+#의사 결정 트리 모델의 파일 출력
+#decision tree graph 생성을 위한 함수 호출로 dot파일 생성
+export_graphviz(decision_tree_best, out_file="ctr_decision_tree.dot", feature_names=vectorizer.feature_names_, 
+                class_names=["0","1"], rounded=True, filled=True, impurity= True)
+#dot 파일을 기반으로 그래프 생성 및 파일 저장
+graph = pydot.graph_from_dot_file("ctr_decision_tree.dot")
+graph.write_png("ctr_decision_tree.png")
