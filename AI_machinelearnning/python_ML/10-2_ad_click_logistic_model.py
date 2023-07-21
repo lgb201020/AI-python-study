@@ -28,7 +28,9 @@ X_train = vectorizer.fit_transform(X_dict_train)
 X_test = vectorizer.transform(X_dict_test)
 
 #logistic regression model object 생성
-clf = LogisticRegression(max_iter = 1000)
+clf = LogisticRegression(max_iter = 1000, solver = "saga")
+#*solver는 'lbfgs', 'liblinear', 'newton-cg', 'newton-cholesky', 'sag', 'saga'가 있는데 이중에서 penalty가 l1,l2모두 가능한게 saga이다.
+#*solver가 한 값에 수렴하기 위해 입력받는 데이터의 최대값을 설정해줘야한다. default는 100이다.
 #*LogisticRegression()은 C와 penalty를 parameters로 갖고 있다. C는 L1,L2 규제 강도를 지정하는 매개변수로 C가 0에 가까울 수록 규제 강도가 강해진다.
 #*penalty는 L1,L2 중 어떠한 규제 알고리즘을 사용할지 지정하는 매개변수이다.
 #*L1는 계수값이 항상 0보다 크거나 같다, L2는 계수값이 항상 0보다 크다. 이 둘의 차이는 L1만 계수값이 0이 될 수 있다는 것이다.
@@ -39,6 +41,7 @@ clf.fit(X_train, y_train)
 parameters = {"C": [0.001, 0.01, 0.1, 1, 10], "penalty": ["l1","l2"]}
 #하이퍼 파라미터로 C에 규제 강도를 입력하고 penalty에 L1규제를 적용할지 L2규제를 적용할지 정하기 위해 리스트 형테로 둘다 넣음
 grid_search = GridSearchCV(clf, parameters, n_jobs=1, cv=3, scoring= "roc_auc")
+#/* 로컬로 실행시 시스템 내부 설정으로 인해 n_jobs = -1이 불가하고 colab으로 실행시 -1이 가능하다.
 grid_search.fit(X_train, y_train)
 
 #최적의 하이퍼 파라미터 출력
